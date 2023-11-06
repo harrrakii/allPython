@@ -1,4 +1,8 @@
 import keyboard
+import csv
+import json
+from datetime import datetime
+import os
 work = True
 name1 = "Максим"
 steps = {
@@ -143,6 +147,8 @@ def menu():
                 case '2':
                     exit()
                     break
+
+
          except ValueError:
             print('Неизвестная комманда.')
 
@@ -171,12 +177,86 @@ def main():
         step_id = game[0]
         work = game[1]
         coin = game[2]
+    return coin
 
 def coins(coin):
     coin += 1
     print('+ 1 монета')
     return coin
 
+def deleteSave(sTime, eTime, data, allTime):
+    print("Хотите ли вы удалить сохранение?")
+    c = input().lower()
+    if c == "да":
+        for key, value in data.items():
+            print(f"{key}, {value}")
+        k = int(input("Выберите номер сохранения: "))
+        data.pop(k)
+        with open('data.csv', 'w', newline='') as file:
+            file.truncate(0)
+            writer = csv.writer(file)
+            for row in data.keys():
+                writer.writerow(data[row])
+        for key in data.keys():
+            dictT = {'sTime': data[key][0],
+                     'eTime': data[key][1],
+                     'allTime': data[key][2],-
+                     'coin': data[key][3]}
+            data[key] = dictT
+        with open('data.json', 'w') as file:
+            file.truncate(0)
+            json.dump(data, file, indent=4)
+    else:
+        print('The end')
+
 if __name__ == "__main__":
+    sTime = datetime.now()
     menu()
-    main()
+    coin = main()
+    eTime = datetime.now()
+    allTime = eTime - sTime
+    data = {1: {
+            'sTime': str(sTime),
+            'eTime': str(eTime),
+            'allTime': str(allTime),
+            'coin': coin} }
+    if os.path.exists('data.json'):
+        with open('data.json', 'r') as file:
+            data = json.load(file)
+        data[len(data.keys()) + 1] = {'sTime': str(sTime),
+                                  'eTime': str(eTime),
+                                  'allTime': str(allTime),
+                                  'coin': coin}
+        with open('data.json', 'w') as file:
+            json.dump(data, file, indent=4)
+
+    else:
+        with open('data.json', 'w') as file:
+            json.dump(data, file, indent=4)
+
+    if os.path.exists('data.csv'):
+        with open('data.csv', 'r') as file:
+            data.clear()
+            reader = csv.reader(file)
+            for row in reader:
+                data[len(data.keys()) + 1] = row
+        data[len(data.keys()) + 1] = [str(sTime), str(eTime), str(allTime), coin]
+        with open('data.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            for key in data.keys():
+                writer.writerow(data[key])
+    else:
+        with open('data.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            for key in data.keys():
+                writer.writerow(list(data[key].values()))
+    deleteSave(sTime, eTime, data, allTime)
+
+
+
+
+
+
+
+
+

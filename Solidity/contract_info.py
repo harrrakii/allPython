@@ -1,4 +1,4 @@
-address_contract = ''
+address_contract = '0x859e23C83cA7E4CF886d4B4c4F278e1B0d6C782b'
 
 abi = """
 [
@@ -75,6 +75,19 @@ abi = """
 		],
 		"name": "adStatusChanged",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "idAd",
+				"type": "uint256"
+			}
+		],
+		"name": "buyEstate",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
 	},
 	{
 		"inputs": [
